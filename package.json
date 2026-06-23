@@ -1,0 +1,26 @@
+{
+  "name": "memory-palace",
+  "version": "0.1.0",
+  "description": "A mobile-first memory palace study page for material processing fundamentals.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zhaozehan0424-design/memory-palace.git"
+  },
+  "homepage": "https://memory-palace-five.vercel.app",
+  "keywords": [
+    "memory-palace",
+    "study",
+    "flashcards",
+    "materials-science",
+    "vercel"
+  ],
+  "type": "commonjs",
+  "scripts": {
+    "check": "node scripts/check-public-page.cjs"
+  },
+  "engines": {
+    "node": "22.x"
+  }
+}
+

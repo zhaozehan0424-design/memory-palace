@@ -1,0 +1,338 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>材料加工 · 记忆宫殿</title>
+<style>
+:root{
+--bg:#060613;--surf:#0e0e26;--surf2:#161638;--surf3:#1e1e48;
+--pri:#7c5cfc;--prisoft:#9b85fc;--priglow:rgba(124,92,252,.3);
+--grn:#34d399;--grnsoft:rgba(52,211,153,.15);--red:#f87171;--redsoft:rgba(248,113,113,.12);
+--amb:#fbbf24;--ambsoft:rgba(251,191,36,.12);
+--cyan:#22d3ee;--cyansoft:rgba(34,211,238,.1);
+--pink:#f472b6;--pinksoft:rgba(244,114,182,.1);
+--txt:#e8eaf0;--txt2:#b0b4c4;--txt3:#7278a0;
+--border:#28285a;--rad:16px;--rads:12px;
+--font:-apple-system,'PingFang SC','Microsoft YaHei',system-ui,sans-serif;
+--safe-bottom:env(safe-area-inset-bottom,12px);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);background:var(--bg);color:var(--txt);min-height:100vh;min-height:100dvh;overflow-x:hidden;-webkit-font-smoothing:antialiased;-webkit-user-select:none;user-select:none}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(6,6,19,.92);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid var(--border);padding:12px 16px;display:flex;align-items:center;justify-content:space-between}
+.topbar .logo{font-size:1.1rem;font-weight:800;background:linear-gradient(135deg,var(--prisoft),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.topbar .mode-row{display:flex;gap:4px}
+.topbar .mbtn{width:34px;height:34px;border-radius:10px;border:1.5px solid var(--border);background:rgba(20,20,50,.6);display:flex;align-items:center;justify-content:center;font-size:1rem;cursor:pointer;transition:all .2s}
+.topbar .mbtn.active{border-color:var(--pri);background:rgba(124,92,252,.2);box-shadow:0 0 14px var(--priglow)}
+.content{padding:12px 14px calc(80px + var(--safe-bottom))}
+.sub-chips{display:flex;gap:8px;overflow-x:auto;padding:4px 0 14px;scrollbar-width:none;-ms-overflow-style:none}
+.sub-chips::-webkit-scrollbar{display:none}
+.chip{padding:10px 18px;border-radius:50px;border:1.5px solid var(--border);background:rgba(20,20,50,.6);font-size:.88rem;font-weight:600;white-space:nowrap;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:6px}
+.chip.active{border-color:var(--pri);background:rgba(124,92,252,.18);color:#fff;box-shadow:0 0 18px var(--priglow)}
+.kcard{background:rgba(14,14,38,.75);border:1px solid var(--border);border-radius:var(--rad);padding:18px 18px;margin-bottom:12px;position:relative}
+.kcard.important{border-left:4px solid var(--amb)}
+.kcard.danger{border-left:4px solid var(--red)}
+.kcard .ktag{display:inline-block;font-size:.72rem;padding:3px 10px;border-radius:50px;font-weight:600;margin-bottom:10px}
+.kcard .ktag.kfact{background:rgba(124,92,252,.15);color:var(--prisoft)}
+.kcard .ktag.ktip{background:rgba(251,191,36,.12);color:var(--amb)}
+.kcard .ktag.kwarn{background:rgba(248,113,113,.1);color:var(--red)}
+.kcard .ktag.kmnem{background:rgba(34,211,238,.1);color:var(--cyan)}
+.kcard h3{font-size:1.05rem;font-weight:700;margin-bottom:10px;line-height:1.5}
+.kcard p{font-size:.92rem;color:var(--txt2);line-height:1.9}
+.kcard .khl{background:rgba(124,92,252,.12);padding:2px 6px;border-radius:4px;font-weight:600;color:var(--prisoft)}
+.kcard .khl.red{background:var(--redsoft);color:var(--red)}
+.kcard .khl.amber{background:var(--ambsoft);color:var(--amb)}
+.kcard .khl.cyan{background:var(--cyansoft);color:var(--cyan)}
+.kcard .khl.pink{background:var(--pinksoft);color:var(--pink)}
+.flip-wrap{margin-bottom:14px;perspective:800px}
+.flip{position:relative;transition:transform .5s cubic-bezier(.4,0,.2,1);transform-style:preserve-3d;cursor:pointer;min-height:150px;-webkit-tap-highlight-color:transparent}
+.flip.flipped{transform:rotateY(180deg)}
+.flip .front,.flip .back{backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:var(--rad);padding:18px 18px;border:1.5px solid var(--border)}
+.flip .front{background:rgba(14,14,38,.85);display:flex;flex-direction:column;justify-content:center}
+.flip .back{position:absolute;inset:0;background:rgba(24,24,58,.92);border-color:var(--pri);transform:rotateY(180deg);overflow-y:auto;display:flex;align-items:center}
+.flip .ftag{position:absolute;top:12px;right:12px;font-size:.7rem;padding:3px 10px;border-radius:50px;font-weight:600;z-index:2}
+.flip .ftag.ft1{background:rgba(124,92,252,.15);color:var(--prisoft)}
+.flip .ftag.ft2{background:var(--ambsoft);color:var(--amb)}
+.flip .ftag.ft3{background:var(--redsoft);color:var(--red)}
+.flip .fq{font-size:1.05rem;font-weight:600;line-height:1.7}
+.flip .fhint{font-size:.78rem;color:var(--txt3);margin-top:10px;display:flex;align-items:center;gap:4px}
+.flip .fa{font-size:.95rem;color:var(--txt2);line-height:1.85;padding:8px 0}
+.flip .fa strong{color:var(--txt)}
+.ctable{width:100%;border-collapse:collapse;margin:8px 0 14px;font-size:.8rem}
+.ctable th{background:var(--surf3);padding:10px 10px;text-align:left;font-weight:700;color:var(--prisoft);font-size:.75rem;border-bottom:2px solid var(--pri)}
+.ctable td{padding:10px 10px;border-bottom:1px solid var(--border);color:var(--txt2);line-height:1.6}
+.ctable td:first-child{font-weight:600;color:var(--txt)}
+.ctable .win{color:var(--grn);font-weight:700}
+.ctable .lose{color:var(--red)}
+.mbox{background:linear-gradient(135deg,rgba(34,211,238,.05),rgba(124,92,252,.05));border:1.5px solid rgba(34,211,238,.2);border-radius:var(--rads);padding:16px 18px;margin:12px 0}
+.mbox .mhead{font-size:.84rem;font-weight:700;color:var(--cyan);margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.mbox p{font-size:.9rem;color:var(--txt2);line-height:1.8}
+.miniq{background:rgba(14,14,38,.75);border:1px solid var(--border);border-radius:var(--rad);padding:16px 16px;margin-bottom:10px}
+.miniq .mq{font-size:.95rem;font-weight:600;margin-bottom:12px;line-height:1.6}
+.miniq .mo{display:flex;flex-direction:column;gap:8px}
+.miniq .mobtn{padding:14px 16px;border-radius:12px;border:1.5px solid var(--border);background:rgba(20,20,50,.5);color:var(--txt2);cursor:pointer;font-size:.92rem;font-weight:500;transition:all .2s;text-align:left}
+.miniq .mobtn:active:not(.mlocked){border-color:var(--pri);background:rgba(124,92,252,.15)}
+.miniq .mobtn.mpick{border-color:var(--pri);background:rgba(124,92,252,.15);color:#fff}
+.miniq .mobtn.mlocked{pointer-events:none}
+.miniq .mobtn.mok{border-color:var(--grn)!important;background:var(--grnsoft)!important;color:var(--grn)!important}
+.miniq .mobtn.mno{border-color:var(--red)!important;background:var(--redsoft)!important;color:var(--red)!important}
+.miniq .mresult{margin-top:10px;padding:12px 14px;border-radius:10px;font-size:.84rem;display:none;line-height:1.7}
+.miniq .mresult.show{display:block}
+.miniq .mresult.mgood{background:var(--grnsoft);color:var(--grn)}
+.miniq .mresult.mbad{background:var(--redsoft);color:var(--red)}
+.sh{padding:8px 0;margin:18px 0 10px;display:flex;align-items:center;gap:8px;font-size:.85rem;font-weight:600;color:var(--txt3);border-bottom:1px solid rgba(40,40,90,.4);padding-bottom:8px}
+.sh .shicon{font-size:1.2rem}
+.bnav{position:fixed;bottom:0;left:0;right:0;z-index:200;background:rgba(8,8,26,.94);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-top:1px solid var(--border);display:flex;padding:8px 8px var(--safe-bottom)}
+.bnav .bnbtn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:6px 4px;border-radius:12px;cursor:pointer;transition:all .2s;border:none;background:none;color:var(--txt3);font-size:.68rem;font-weight:500;font-family:var(--font)}
+.bnav .bnbtn .bi{font-size:1.3rem;transition:transform .2s}
+.bnav .bnbtn.active{color:var(--prisoft)}
+.bnav .bnbtn.active .bi{transform:scale(1.15)}
+.bnav .bnbtn:active{background:rgba(124,92,252,.1)}
+.section-label{font-size:.78rem;color:var(--txt3);font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin:16px 0 6px;padding:6px 0;display:flex;align-items:center;gap:6px}
+.swipe-hint{text-align:center;padding:8px;font-size:.75rem;color:var(--txt3);animation:pulse2 2s ease-in-out infinite}
+@keyframes pulse2{0%,100%{opacity:.4}50%{opacity:1}}
+.diff{display:inline-block;font-size:.65rem;padding:2px 8px;border-radius:4px;font-weight:700;margin-left:4px}
+.diff.easy{background:var(--grnsoft);color:var(--grn)}
+.diff.med{background:var(--ambsoft);color:var(--amb)}
+.diff.hard{background:var(--redsoft);color:var(--red)}
+.coll-badge{display:inline-block;padding:3px 10px;border-radius:50px;font-size:.7rem;font-weight:600;margin:2px}
+.coll-badge.hard-coll{background:var(--redsoft);color:var(--red)}
+.coll-badge.trap-coll{background:var(--ambsoft);color:var(--amb)}
+.ripple{position:absolute;border-radius:50%;background:rgba(124,92,252,.2);transform:scale(0);animation:ripple .6s ease-out;pointer-events:none}
+@keyframes ripple{to{transform:scale(4);opacity:0}}
+.fab{position:fixed;bottom:90px;right:16px;z-index:150;width:48px;height:48px;border-radius:50%;background:var(--pri);color:#fff;border:none;font-size:1.3rem;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 8px 28px var(--priglow);transition:all .2s}
+.fab:active{transform:scale(.9);box-shadow:0 4px 14px var(--priglow)}
+::-webkit-scrollbar{width:3px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border)}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+ <div class="logo">🏯 记忆宫殿</div>
+ <div class="mode-row">
+ <div class="mbtn active" onclick="setMode('learn')" id="mlearn" title="知识卡片">📖</div>
+ <div class="mbtn" onclick="setMode('flip')" id="mflip" title="翻牌自检">🃏</div>
+ <div class="mbtn" onclick="setMode('compare')" id="mcompare" title="对比">⚖️</div>
+ <div class="mbtn" onclick="setMode('quiz')" id="mquiz" title="自测">🎮</div>
+ <div class="mbtn" onclick="setMode('hard')" id="mhard" title="难点">🔥</div>
+ </div>
+</div>
+
+<div class="content" id="content"></div>
+
+<div class="bnav">
+ <button class="bnbtn active" onclick="switchSub(0)" id="bn0"><span class="bi">🏗️</span>铸造</button>
+ <button class="bnbtn" onclick="switchSub(1)" id="bn1"><span class="bi">⚙️</span>锻焊冲压</button>
+ <button class="bnbtn" onclick="switchSub(2)" id="bn2"><span class="bi">🔩</span>机械加工</button>
+</div>
+<button class="fab" onclick="scrollToTop()" title="回顶部">⬆</button>
+
+<script>
+const SUBJECTS=[{
+ id:'casting',icon:'🏗️',name:'铸造基础',
+ cards:[
+ {type:'fact',title:'铸造缺陷 · 四大类',body:'常见铸造缺陷：<span class="khl">缩孔与缩松</span>（凝固收缩）、<span class="khl">气孔与夹渣</span>（气体/杂质）、<span class="khl">浇不足与冷隔</span>（流动性差）、<span class="khl">热裂与冷裂</span>（应力）。<br><br>⚠️ <strong>注意</strong>：<span class="khl red">翻边、落料</span>是冲压工序，<strong>不是</strong>铸造缺陷！考试最爱挖这个坑。',important:true},
+ {type:'fact',title:'铸造性能 · 两大指标',body:'合金铸造性能 = <span class="khl">流动性</span> + <span class="khl">收缩性</span>。<br><br>流动性 → 充型能力；收缩性 → 缩孔/缩松/变形/裂纹倾向。<br>口诀：<span class="khl cyan">"流得满，缩得少"</span>——流动性好铸型填得满，收缩小缺陷少。'},
+ {type:'fact',title:'凝固方式 · 三种',body:'<span class="khl">逐层凝固</span>：纯金属、共晶合金 → 界面分明<br><span class="khl">糊状凝固</span>：宽结晶温度范围 → 固液共存糊状区<br><span class="khl">中间凝固</span>：介于两者之间<br><br>🔑 共晶成分→逐层凝固→<strong>流动性最好</strong>。',important:true},
+ {type:'tip',title:'防缩孔缩松 · 顺序凝固',body:'<span class="khl amber">顺序凝固</span>：远离冒口先凝 → 近冒口后凝 → 缩孔集中到冒口切除。<br><br>vs <span class="khl">同时凝固</span>：用于防应力变形，不是防缩孔！<br>口诀：<span class="khl cyan">"缩孔找顺序，应力找同时"</span>'},
+ {type:'fact',title:'铸铁石墨化 · 元素角色',body:'<strong>促进石墨化</strong>：<span class="khl">Si（硅）</span> ⭐最重要！<br><strong>阻碍石墨化</strong>：<span class="khl red">Mn（锰）、S（硫）</span><br><br>口诀：<span class="khl cyan">"硅促石墨锰阻之"</span>',important:true},
+ {type:'fact',title:'铸铁石墨形态 · 四种',body:'<span class="khl">灰口铸铁</span>：<strong>片状</strong>石墨<br><span class="khl">可锻铸铁</span>：<strong>团絮状</strong>石墨（白口铸铁高温退火）<br><span class="khl">球墨铸铁</span>：<strong>球状</strong>石墨（Mg/Ce球化处理）<br><span class="khl">蠕墨铸铁</span>：<strong>蠕虫状</strong>石墨<br><br>口诀：<span class="khl cyan">"灰片可团球球蠕虫"</span>',important:true},
+ {type:'tip',title:'冷变形 vs 热变形',body:'<span class="khl">冷变形</span>：再结晶温度<span class="khl red">以下</span> → <strong>加工硬化</strong>（强度↑塑性↓）<br><span class="khl">热变形</span>：再结晶温度<span class="khl">以上</span> → 可再结晶消除硬化<br><br>⚠️ 不是按室温，是按再结晶温度！'},
+ {type:'warn',title:'塑性变形后组织变化',body:'室温塑性变形后：①晶粒<span class="khl">伸长</span>（纤维状）②晶格<span class="khl">扭曲</span>（位错↑）③产生<span class="khl">碎晶</span><br><br>⚠️ <span class="khl red">"晶粒长大"不是变形后的变化！</span>是再结晶退火后才发生的。高频陷阱！',danger:true},
+ {type:'tip',title:'铸钢流动性 · 反直觉',body:'流动性排序：<span class="khl">灰铸铁 > 硅黄铜 > 铝硅合金 > 铸钢</span><br><br>💀 题目说"铸钢流动性最好"→立刻判错！铸钢流动性是<strong>最差</strong>的。',danger:true},
+ {type:'mnem',title:'🔮 铸造终极口诀',body:'<strong>缺陷四类记心间</strong>：缩松气孔浇不足<br><strong>性能两字流动缩</strong>：流得满来缩得少<br><strong>共晶逐层流最好</strong>：恒温凝固无糊状<br><strong>顺序凝固防缩孔</strong>：远先近后冒口收<br><strong>硅促石墨锰阻之</strong>：灰片可团球蠕虫<br><strong>冷变硬化热消除</strong>：再结晶温是分界<br><strong>铸钢流动是最差</strong>：灰铁才是第一名'},
+ ],
+ flips:[
+ {q:'合金铸造性能用哪两个指标衡量？',a:'<strong>流动性</strong>和<strong>收缩性</strong>。流动性决定充型能力，收缩性决定缩孔缩松和变形倾向。',tag:'ft1'},
+ {q:'纯金属和共晶合金的凝固方式？',a:'<strong>逐层凝固</strong>。因为结晶温度范围窄，固-液界面分明。',tag:'ft1'},
+ {q:'防缩孔缩松用什么原则？防应力呢？',a:'防缩孔→<strong>顺序凝固</strong>。防应力→<strong>同时凝固</strong>。',tag:'ft2'},
+ {q:'促进铸铁石墨化最重要的元素？',a:'<strong>Si（硅）</strong>。Mn和S是阻碍石墨化的。',tag:'ft1'},
+ {q:'可锻铸铁的石墨形态？怎么做的？',a:'<strong>团絮状</strong>。白口铸铁经<strong>高温退火</strong>后析出。注意"可锻"≠可以锻造！',tag:'ft2'},
+ {q:'冷变形后强度和塑性怎么变？',a:'强度<strong>升高</strong>，塑性<strong>下降</strong>——<strong>加工硬化</strong>。',tag:'ft1'},
+ {q:'再结晶温度以下的变形叫什么？',a:'<strong>冷变形</strong>（产生加工硬化）。以上叫<strong>热变形</strong>。',tag:'ft2'},
+ {q:'哪种铸造合金流动性最差？',a:'<strong>铸钢</strong>流动性最差！灰铸铁最好。反直觉考点。',tag:'ft3'},
+ ],
+ compares:[
+ {title:'顺序凝固 vs 同时凝固',headers:['','顺序凝固','同时凝固'],rows:[['目的','防缩孔缩松','防应力变形裂纹'],['方法','远离冒口先凝','各部位同时冷却'],['应用','厚大铸件','薄壁均匀件']]},
+ {title:'冷变形 vs 热变形',headers:['','冷变形','热变形'],rows:[['温度','＜再结晶温度','＞再结晶温度'],['加工硬化','<span class="win">产生</span>','<span class="lose">不发生</span>'],['塑性变化','<span class="lose">下降</span>','<span class="win">保持较好</span>']]},
+ {title:'四种铸铁石墨形态',headers:['铸铁类型','石墨形态','特征'],rows:[['灰口铸铁','片状','最常用，减振好'],['可锻铸铁','团絮状','白口铸铁高温退火'],['球墨铸铁','球状','Mg/Ce球化处理'],['蠕墨铸铁','蠕虫状','介于灰铁和球铁之间']]},
+ ],
+ quiz:[
+ {q:'防止铸件缩孔缩松采用（）原则。',opts:['同时凝固','顺序凝固','逐层凝固','糊状凝固'],ans:1,exp:'✅ 顺序凝固 → 缩孔集中到冒口去除。'},
+ {q:'下列不属于铸造缺陷的是？',opts:['缩孔','气孔','翻边','冷隔'],ans:2,exp:'✅ 翻边是冲压工序。'},
+ {q:'促进铸铁石墨化的元素是？',opts:['Mn','S','Si','P'],ans:2,exp:'✅ Si（硅）是最重要的石墨化促进元素。'},
+ {q:'共晶成分合金的凝固方式是？',opts:['糊状凝固','逐层凝固','中间凝固','体积凝固'],ans:1,exp:'✅ 共晶恒温凝固→逐层凝固→流动性最好。'},
+ {q:'可锻铸铁的石墨形态是？',opts:['片状','球状','团絮状','蠕虫状'],ans:2,exp:'✅ 可锻铸铁→团絮状。灰口→片状，球墨→球状。'},
+ {q:'冷变形后金属的塑性（）',opts:['升高','下降','不变','先升后降'],ans:1,exp:'✅ 加工硬化→强度↑塑性↓。'},
+ {q:'再结晶温度以下的变形称（）',opts:['热变形','冷变形','温变形','弹性变形'],ans:1,exp:'✅ 低于再结晶温度→冷变形。'},
+ {q:'流动最好的铸造合金是？',opts:['铸钢','灰铸铁','铝硅合金','硅黄铜'],ans:1,exp:'✅ 灰铸铁最好，铸钢最差！'},
+ ],
+ hard:[
+ {q:'铸件壁间避免锐角连接的正确做法？',a:'改用<strong>圆角过渡</strong>，不是"先转角接头后再直角"。',trap:'混淆项常写"先转角后再直角"'},
+ {q:'"晶粒长大"是塑性变形后的组织变化吗？',a:'<strong>不是！</strong>晶粒长大是再结晶退火后发生的。变形后是：晶粒伸长、晶格扭曲、碎晶。',trap:'高频陷阱！'},
+ {q:'"铸钢流动性最好"对吗？',a:'<strong>错！</strong>铸钢流动性最差。灰铸铁最好。',trap:'反直觉送命题'},
+ ]
+},{
+ id:'forge',icon:'⚙️',name:'锻压·焊接·冲压',
+ cards:[
+ {type:'fact',title:'自由锻基本工序',body:'<span class="khl">镦粗、拔长、冲孔</span>、扩孔、弯曲、扭转、错移、切割。<br><br>⚠️ <span class="khl red">滚圆不属于自由锻！</span>滚圆是模锻的制坯工步（滚压模膛）。',important:true},
+ {type:'fact',title:'焊接方法 · 选型指南',body:'<span class="khl">埋弧焊</span>→平直长焊缝+大直径环形焊缝<br><span class="khl">CO₂焊</span>→<span class="khl red">飞溅严重</span>是其最显著缺点<br><span class="khl">TIG焊</span>→薄板精密焊接，飞溅极少<br><span class="khl">钎焊</span>→母材不熔化，不产生飞溅',important:true},
+ {type:'fact',title:'焊接方法 · 三大类',body:'按工艺特点分：<br>① <span class="khl">熔化焊</span>——母材+填充金属共同熔化<br>② <span class="khl">压力焊</span>——加压使连接面塑性变形/扩散<br>③ <span class="khl">钎焊</span>——低熔点钎料填充，母材不熔化'},
+ {type:'fact',title:'焊接热影响区(HAZ) · 四区',body:'焊缝→母材依次：<br>① <span class="khl">熔合区</span>——半熔化过渡区<br>② <span class="khl red">过热区</span>——晶粒粗大，<strong>性能最差</strong><br>③ <span class="khl">正火区</span>——细小组织，<strong>性能较好</strong><br>④ <span class="khl">部分相变区</span>——组织不均<br><br>口诀：<span class="khl cyan">"熔过正部"</span>',important:true},
+ {type:'fact',title:'焊接电弧 · 三区',body:'<span class="khl">阴极区</span>——发射电子<br><span class="khl">阳极区</span>——接收电子<br><span class="khl">弧柱区</span>——等离子体导电，温度最高6000~8000K'},
+ {type:'tip',title:'落料 = 分离工序 ≠ 变形工序',body:'冲压两大类：<br><span class="khl">分离工序</span>：落料、冲孔、切断<br><span class="khl pink">变形工序</span>：弯曲、拉深、翻边<br><br>⚠️ <span class="khl red">落料是分离工序！</span>考试常见陷阱',danger:true},
+ {type:'tip',title:'分模面 · 选在模膛浅处',body:'分模面应选在<span class="khl">模膛深度较浅</span>处：减小流动阻力、便于取出、减小加工深度。<br><br>⚠️ 题目说"选在深处"→错！',danger:true},
+ {type:'fact',title:'预锻 vs 终锻模膛',body:'<strong>预锻</strong>：圆角<span class="khl">大</span>、斜度<span class="khl">大</span>、<span class="khl red">无飞边槽</span><br><strong>终锻</strong>：圆角斜度小、<span class="khl">有飞边槽</span>',important:true},
+ {type:'tip',title:'制坯模膛 ≠ 模锻模膛',body:'二者<strong>并列</strong>，不是包含关系！<br><br><span class="khl">制坯模膛</span>：拔长、滚压、弯曲 → 中间形状<br><span class="khl pink">模锻模膛</span>：预锻 + 终锻 → 最终成形',danger:true},
+ {type:'mnem',title:'🔮 锻焊冲压口诀',body:'<strong>自由锻五工序</strong>：镦拔冲孔扩弯扭<br><strong>滚圆不是自由锻</strong>：模锻制坯才用它<br><strong>埋弧长缝大环缝</strong>：CO₂飞溅是硬伤<br><strong>焊接方法分三大</strong>：熔压钎焊各不同<br><strong>热影响区有四带</strong>：熔过正部性能变<br><strong>落料分离非变形</strong>：冲孔切断是一家<br><strong>预锻无飞边槽</strong>：圆角斜度都偏大'},
+ ],
+ flips:[
+ {q:'自由锻基本工序有哪些？滚圆是吗？',a:'镦粗、拔长、冲孔、扩孔、弯曲等。<strong>滚圆不是！</strong>是模锻制坯工步。',tag:'ft1'},
+ {q:'适合平直长焊缝的焊接方法？',a:'<strong>埋弧焊</strong>。效率高、熔深大、适合机械化。',tag:'ft1'},
+ {q:'哪种焊接方法飞溅最严重？',a:'<strong>CO₂气体保护焊</strong>。CO₂分解导致熔滴过渡不稳。',tag:'ft2'},
+ {q:'焊接HAZ性能最差的区域是？',a:'<strong>过热区</strong>（晶粒粗大）。正火区反而性能较好。',tag:'ft1'},
+ {q:'落料属于变形工序吗？',a:'<strong>不！</strong>属于<strong>分离工序</strong>。变形工序是弯曲、拉深。',tag:'ft3'},
+ {q:'预锻模膛有飞边槽吗？',a:'<strong>没有！</strong>飞边槽只设在终锻模膛。',tag:'ft3'},
+ {q:'制坯模膛分为终锻和预锻吗？',a:'<strong>不是！</strong>二者<strong>并列</strong>，不是包含关系。',tag:'ft3'},
+ ],
+ compares:[
+ {title:'预锻 vs 终锻模膛',headers:['','预锻模膛','终锻模膛'],rows:[['圆角半径','<span class="win">较大</span>','较小'],['拔模斜度','<span class="win">较大</span>','较小'],['飞边槽','<span class="lose">无</span>','<span class="win">有</span>']]},
+ {title:'四种焊接方法对比',headers:['方法','飞溅','适用场景'],rows:[['埋弧焊','<span class="win">极少</span>','长直缝、大环缝'],['CO₂焊','<span class="lose">严重</span>','一般钢结构'],['TIG焊','<span class="win">极少</span>','薄板精密件'],['钎焊','<span class="win">无</span>','异种金属连接']]},
+ ],
+ quiz:[
+ {q:'不属于自由锻基本工序的是？',opts:['镦粗','拔长','滚圆','冲孔'],ans:2,exp:'✅ 滚圆是模锻制坯工步。'},
+ {q:'适合长焊缝的焊接方法？',opts:['手工电弧焊','埋弧焊','TIG焊','CO₂焊'],ans:1,exp:'✅ 埋弧焊效率高熔深大。'},
+ {q:'飞溅最严重的焊接方法？',opts:['TIG焊','CO₂焊','埋弧焊','钎焊'],ans:1,exp:'✅ CO₂焊飞溅严重是显著缺点。'},
+ {q:'HAZ中性能最差的区域？',opts:['熔合区','过热区','正火区','部分相变区'],ans:1,exp:'✅ 过热区晶粒粗大性能最差。'},
+ {q:'落料属于什么工序？',opts:['变形工序','分离工序','成形工序','连接工序'],ans:1,exp:'✅ 落料是分离工序！'},
+ {q:'预锻模膛有飞边槽吗？',opts:['有','没有','看情况','大型模锻有'],ans:1,exp:'✅ 预锻无飞边槽。'},
+ ],
+ hard:[
+ {q:'"制坯模膛分为终锻和预锻"对吗？',a:'<strong>错！</strong>二者<strong>并列</strong>，不是包含关系。制坯≠模锻。',trap:'最容易搞混的概念关系'},
+ {q:'落料属于变形工序吗？',a:'<strong>不！</strong>落料是<strong>分离工序</strong>。名字有迷惑性。',trap:'名字有迷惑性'},
+ ]
+},{
+ id:'machining',icon:'🔩',name:'机械加工',
+ cards:[
+ {type:'fact',title:'刃倾角 · 粗精有别',body:'<span class="khl">粗加工</span>：取<span class="khl red">负值</span>→刀尖远离冲击→<strong>保护刀尖</strong><br><span class="khl">精加工</span>：取<span class="khl">正值或零</span>→切屑流向待加工面→<strong>不划伤已加工面</strong><br><br>口诀：<span class="khl cyan">"粗负保刀尖，精正保表面"</span>',important:true},
+ {type:'fact',title:'积屑瘤(BUE) · 双面刃',body:'<span class="khl red">精加工</span>：积屑瘤<strong>极为有害</strong>——粗糙度↑精度↓<br><span class="khl">粗加工</span>：有一定好处——保护刀尖<br><br>⚠️ 精加工用<span class="khl">高速</span>避开积屑瘤区（中速15~50m/min最易产生）',important:true},
+ {type:'fact',title:'加工方法 · 选型速查',body:'<span class="khl">外圆面</span>→车削+磨削<br><span class="khl">平面</span>→铣削+刨削<br><span class="khl">孔</span>→钻、扩、铰、镗、磨、拉<br><span class="khl">淬硬材料</span>→<span class="khl amber">只能用磨削</span>（普通刀具硬度不够）',important:true},
+ {type:'tip',title:'精加工不用低速！',body:'<span class="khl red">"精车精铣用低速避免积屑瘤"→错！</span><br><br>①精加工用<span class="khl">高速</span>获得好表面<br>②积屑瘤在<strong>中速</strong>最易产生<br>③正确做法：<strong>高速避开</strong>',danger:true},
+ {type:'fact',title:'磨削 = 精加工',body:'典型<span class="khl">精加工</span>方法：IT5~IT6级，Ra 0.2~0.8μm。<br>安排在<span class="khl">半精车之后</span>作为最终工序。<br>优势：可加工<span class="khl amber">淬硬材料</span>——"以硬克硬"。'},
+ {type:'tip',title:'刨削能加工内表面吗？',body:'<span class="khl red">不能！</span>刨削加工平面、斜面等<strong>外表面</strong>。<br>刨刀无法进入内表面和盲孔。内表面→镗削/钻削。',danger:true},
+ {type:'mnem',title:'🔮 机械加工口诀',body:'<strong>刃倾角要分粗细</strong>：粗负保刀精正表<br><strong>积屑瘤是双面刃</strong>：精加工时是大敌<br><strong>外圆车磨孔钻镗</strong>：淬硬材料磨为上<br><strong>刨削只能做外表</strong>：拉削通孔效率高<br><strong>磨削属于精加工</strong>：以硬克硬是王道'},
+ ],
+ flips:[
+ {q:'粗加工刃倾角取正还是负？',a:'取<strong>负值</strong>。让刀尖远离冲击点保护刀尖。',tag:'ft1'},
+ {q:'淬硬材料的孔用什么精加工？',a:'<strong>磨孔</strong>（内圆磨削）。普通刀具硬度不够。',tag:'ft1'},
+ {q:'加工外圆面用什么方法？',a:'<strong>车削</strong>（主要）和<strong>磨削</strong>（精加工）。',tag:'ft1'},
+ {q:'精加工时积屑瘤有利还是有害？',a:'<strong>极为有害！</strong>粗糙度增大、精度降低。',tag:'ft2'},
+ {q:'精车精铣用低速还是高速？',a:'用<strong>高速</strong>！避开积屑瘤产生区。',tag:'ft3'},
+ {q:'磨削属于粗加工还是精加工？',a:'<strong>精加工</strong>。IT5~IT6级，最终工序。',tag:'ft2'},
+ {q:'刨削能加工盲孔吗？',a:'<strong>不能！</strong>刨刀只能加工外表面。',tag:'ft3'},
+ ],
+ compares:[
+ {title:'粗 vs 精加工 · 刃倾角',headers:['','粗加工','精加工'],rows:[['刃倾角','<span class="lose">负值</span>','<span class="win">正值或零</span>'],['目的','保护刀尖','保护已加工面'],['切屑流向','已加工表面','待加工表面']]},
+ ],
+ quiz:[
+ {q:'粗加工刃倾角应取？',opts:['负值','0°','正值','都可以'],ans:0,exp:'✅ 粗加工取负→保护刀尖。'},
+ {q:'淬硬材料孔精加工宜用？',opts:['拉孔','钻孔','扩孔','磨孔'],ans:3,exp:'✅ 淬硬材料只能用磨削。'},
+ {q:'加工外圆面最适合？',opts:['车削和磨削','车削和铣削','铣削和磨削','拉削和刨削'],ans:0,exp:'✅ 车削→回转体，磨削→精加工。'},
+ {q:'精加工阶段积屑瘤（）',opts:['有利','有害','无影响','看材料'],ans:1,exp:'✅ 精加工时积屑瘤极为有害。'},
+ {q:'磨削属于什么加工阶段？',opts:['粗加工','半精加工','精加工','预加工'],ans:2,exp:'✅ 磨削是典型精加工方法。'},
+ {q:'精车精铣应采用（）避开积屑瘤。',opts:['低速','高速','中速','断续切削'],ans:1,exp:'✅ 高速切削避开积屑瘤区。'},
+ {q:'刨削适合加工（）',opts:['内表面','盲孔','平面和斜面','外圆面'],ans:2,exp:'✅ 刨削加工外表面。'},
+ ],
+ hard:[
+ {q:'"精车精铣用低速避免积屑瘤"对吗？',a:'<strong>双重错误！</strong>①精加工用高速不是低速；②积屑瘤在中速最易产生。',trap:'两个知识点都容易搞反'},
+ ]
+}];
+
+let curIdx=0,curMode='learn';
+let flips={},quizAnswers={},mastered=new Set(),weak=new Set();
+const sub=()=>SUBJECTS[curIdx];
+
+function render(){
+ let h='';
+ h+=`<div class="sub-chips">${SUBJECTS.map((s,i)=>`<div class="chip${i===curIdx?' active':''}" onclick="switchSub(${i})">${s.icon} ${s.name}</div>`).join('')}</div>`;
+ if(curMode==='learn'){
+ h+=`<div class="section-label">📖 知识点速记</div>`;
+ sub().cards.forEach(c=>{
+ h+=`<div class="kcard${c.important?' important':''}${c.danger?' danger':''}">
+ <span class="ktag ${c.type==='fact'?'kfact':c.type==='tip'?'ktip':c.type==='warn'?'kwarn':'kmnem'}">${c.type==='fact'?'📌':c.type==='tip'?'💡':c.type==='warn'?'⚠️':'🧠'} ${c.title.split('·')[0]||'考点'}</span>
+ <h3>${c.title}</h3><p>${c.body}</p></div>`;
+ });
+ }
+ if(curMode==='flip'){
+ h+=`<div class="section-label">🃏 翻牌自检 —— 点击卡片翻转</div>
+ <div class="swipe-hint">👆 点击正面看答案</div>`;
+ sub().flips.forEach((f,i)=>{
+ h+=`<div class="flip-wrap"><div class="flip${flips[f.q]?' flipped':''}" onclick="flipCard(this,'${f.q.replace(/'/g,"\\'")}')">
+ <div class="front"><span class="ftag ${f.tag}">${f.tag==='ft1'?'基础':f.tag==='ft2'?'进阶':'陷阱'}</span><div class="fq">${f.q}</div><div class="fhint">👆 点击翻转</div></div>
+ <div class="back"><div class="fa">${f.a}</div></div>
+ </div></div>`;
+ });
+ }
+ if(curMode==='compare'){
+ h+=`<div class="section-label">⚖️ 易混概念对比</div>`;
+ sub().compares.forEach(t=>{
+ h+=`<div class="sh"><span class="shicon">⚖️</span>${t.title}</div>
+ <div style="overflow-x:auto"><table class="ctable"><thead><tr>${t.headers.map(h=>`<th>${h}</th>`).join('')}</tr></thead>
+ <tbody>${t.rows.map(r=>`<tr>${r.map((c,i)=>`<td>${c}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+ });
+ }
+ if(curMode==='quiz'){
+ h+=`<div class="section-label">🎮 自测挑战</div>`;
+ sub().quiz.forEach((q,qi)=>{
+ const qid=`${sub().id}-q${qi}`,answered=quizAnswers[qid]!==undefined,ca=quizAnswers[qid];
+ h+=`<div class="miniq">
+ <div class="mq">${qi+1}. ${q.q}</div>
+ <div class="mo">${q.opts.map((o,oi)=>`<div class="mobtn${answered?(oi===q.ans?' mok':(oi===ca?' mno':'')):''}${ca===oi?' mpick':''}${answered?' mlocked':''}" onclick="${answered?'':`aQ('${qid}',${oi},${q.ans})`}">${'ABCD'[oi]}. ${o}</div>`).join('')}</div>
+ ${answered?`<div class="mresult ${ca===q.ans?'mgood':'mbad'} show">${ca===q.ans?'✅ 正确！':'❌ 错误！'} ${q.exp}</div>`:''}
+ </div>`;
+ });
+ }
+ if(curMode==='hard'){
+ h+=`<div class="section-label">🔥 难点攻坚 · 高频易错</div>
+ <div class="mbox"><div class="mhead">⚠️ 这些题最容易在考试中丢分</div><p>以下汇集三科高频陷阱题+原创综合题，每道都有反面解析。</p></div>`;
+ let allH=[];SUBJECTS.forEach(s=>{if(s.hard)s.hard.forEach(hh=>allH.push({...hh,sub:s.name}))});
+ allH.forEach((hh,hi)=>{
+ h+=`<div class="kcard danger">
+ <span class="ktag kwarn">⚠️ ${hh.sub} · 易错</span>
+ <div class="coll-badge trap-coll" style="display:inline-block;margin:4px 0 8px">🕳️ ${hh.trap}</div>
+ <h3>${hi+1}. ${hh.q}</h3><p>👉 ${hh.a}</p></div>`;
+ });
+ h+=`<div class="section-label">🎨 泉此方原创综合题</div>`;
+ const myQs=[
+ {q:'【铸造】"缩孔和翻边都是铸造缺陷"，对吗？',a:'<strong>不对！</strong>翻边是<span class="khl pink">冲压变形工序</span>，不在铸造范畴。'},
+ {q:'【锻造】自由锻和模锻的根本区别？',a:'自由锻用<span class="khl">通用工具</span>，适合单件大件；模锻用<span class="khl">专用模具</span>，适合大批量。'},
+ {q:'【焊接】为什么"CO₂焊飞溅严重但还要用"？',a:'<span class="khl">成本极低</span>——CO₂便宜，焊丝便宜，适合大批量钢结构。'},
+ {q:'【机加】"磨削是粗加工"怎么反驳？',a:'磨削是<span class="khl">精加工</span>典型！IT5~IT6，Ra 0.2~0.8μm，安排在最终工序。'},
+ {q:'【综合】"顺序凝固"和"同时凝固"分别防什么？',a:'<span class="khl">顺序→缩孔缩松</span>（缩孔集中冒口）；<span class="khl">同时→应力变形</span>（均匀冷却）。'},
+ ];
+ myQs.forEach((mq,i)=>{
+ h+=`<div class="flip-wrap"><div class="flip" onclick="this.classList.toggle('flipped')">
+ <div class="front"><span class="ftag ft2">泉此方出题</span><div class="fq">${mq.q}</div><div class="fhint">👆 点击看解析</div></div>
+ <div class="back"><div class="fa">${mq.a}</div></div>
+ </div></div>`;
+ });
+ }
+ document.getElementById('content').innerHTML=h;
+ updBtns();
+}
+function switchSub(i){curIdx=i;render();scrollToTop()}
+function setMode(m){curMode=m;render();scrollToTop()}
+function flipCard(el,q){el.classList.toggle('flipped');if(el.classList.contains('flipped'))flips[q]=true;updBtns()}
+function aQ(qid,oi,ans){quizAnswers[qid]=oi;oi===ans?mastered.add(qid):weak.add(qid);render()}
+function scrollToTop(){window.scrollTo({top:0,behavior:'smooth'})}
+function updBtns(){
+ ['learn','flip','compare','quiz','hard'].forEach(m=>{const e=document.getElementById('m'+m);if(e)e.classList.toggle('active',curMode===m)});
+ [0,1,2].forEach(i=>{const e=document.getElementById('bn'+i);if(e)e.classList.toggle('active',curIdx===i)});
+}
+render();
+</script>
+</body>
+</html>
