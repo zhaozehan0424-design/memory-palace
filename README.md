@@ -56,6 +56,14 @@ npx vercel --prod
 npm run check
 ```
 
+## Checks
+
+GitHub Actions runs the same public-page check on pushes and pull requests:
+
+```powershell
+npm run check
+```
+
 ## Related Work
 
 同一维护者还维护了 [Relay Hub](https://github.com/zhaozehan0424-design/responses-api-gateway)，一个 OpenAI-compatible API gateway，用于 Discord 社区和小团队共享模型访问。

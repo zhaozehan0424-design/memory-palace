@@ -10,6 +10,12 @@ This document records public maintenance work for Memory Palace.
 
 ## Maintenance Log
 
+### 2026-06-26
+
+- Added GitHub Actions CI for `npm run check`.
+- Updated the public-page check to verify real UTF-8 Chinese snippets from `index.html`.
+- Documented the check workflow in the README.
+
 ### 2026-06-23
 
 - Restored the deployed Vercel learning page into the public GitHub repository.
@@ -29,4 +35,3 @@ This document records public maintenance work for Memory Palace.
 - Split the large single-file page into source modules if the content grows.
 - Add screenshots for README once the public page stabilizes.
 - Add more material-processing review cards after manual accuracy checks.
-

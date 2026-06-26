@@ -10,6 +10,7 @@ const requiredFiles = [
   "LICENSE",
   "package.json",
   "vercel.json",
+  ".github/workflows/ci.yml",
 ];
 
 const missing = requiredFiles.filter((file) => !fs.existsSync(path.join(root, file)));
@@ -20,6 +21,8 @@ if (missing.length > 0) {
 
 const html = fs.readFileSync(path.join(root, "index.html"), "utf8");
 const requiredHtmlSnippets = [
+  '<html lang="zh-CN">',
+  '<meta charset="UTF-8">',
   "<title>材料加工 · 记忆宫殿</title>",
   "知识卡片",
   "翻牌自检",
@@ -41,6 +44,7 @@ const readme = fs.readFileSync(path.join(root, "README.md"), "utf8");
 const requiredReadmeSnippets = [
   "https://memory-palace-five.vercel.app",
   "## Features",
+  "## Checks",
   "## Maintenance",
   "## Related Work",
   "MIT",
