@@ -56,6 +56,8 @@ npx vercel --prod
 npm run check
 ```
 
+Security and contribution notes are in [SECURITY.md](./SECURITY.md) and [CONTRIBUTING.md](./CONTRIBUTING.md).
+
 ## Checks
 
 GitHub Actions runs the same public-page check on pushes and pull requests:

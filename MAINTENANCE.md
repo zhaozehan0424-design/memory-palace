@@ -10,6 +10,12 @@ This document records public maintenance work for Memory Palace.
 
 ## Maintenance Log
 
+### 2026-06-27
+
+- Added security and contribution guidelines.
+- Added issue and pull request templates for bug reports, content fixes, and review notes.
+- Extended `npm run check` to require the maintenance and collaboration files.
+
 ### 2026-06-26
 
 - Added GitHub Actions CI for `npm run check`.

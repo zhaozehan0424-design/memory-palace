@@ -7,9 +7,14 @@ const requiredFiles = [
   "README.md",
   "CHANGELOG.md",
   "MAINTENANCE.md",
+  "SECURITY.md",
+  "CONTRIBUTING.md",
   "LICENSE",
   "package.json",
   "vercel.json",
+  ".github/ISSUE_TEMPLATE/bug_report.md",
+  ".github/ISSUE_TEMPLATE/content_fix.md",
+  ".github/pull_request_template.md",
   ".github/workflows/ci.yml",
 ];
 
@@ -47,6 +52,8 @@ const requiredReadmeSnippets = [
   "## Checks",
   "## Maintenance",
   "## Related Work",
+  "CONTRIBUTING.md",
+  "SECURITY.md",
   "MIT",
 ];
 
