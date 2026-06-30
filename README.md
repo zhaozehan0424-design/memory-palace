@@ -1,4 +1,7 @@
 # Memory Palace
+[![CI](https://github.com/zhaozehan0424-design/memory-palace/actions/workflows/ci.yml/badge.svg)](https://github.com/zhaozehan0424-design/memory-palace/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
+[Repository status](./REPOSITORY_STATUS.md) records the latest maintenance checks and release-readiness notes.
 
 材料加工课程的移动端记忆宫殿学习页。
 
